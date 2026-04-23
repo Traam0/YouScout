@@ -63,5 +63,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasDatabaseName("ux_app_users_identity_user_id");
 
         builder.Ignore(u => u.FullName);
+        builder.Ignore(u => u.Events);
     }
 }
