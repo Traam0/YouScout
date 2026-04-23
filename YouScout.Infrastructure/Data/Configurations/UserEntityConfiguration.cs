@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using YouScout.Domain.Entities;
+using YouScout.Infrastructure.Identity;
 
 namespace YouScout.Infrastructure.Data.Configurations;
 
@@ -13,32 +14,25 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(u => u.Id)
             .HasName("pk_app_users_id");
 
+        builder.Property(u => u.IdentityUserId)
+            .HasColumnName("identity_user_id")
+            .IsRequired()
+            .HasMaxLength(450);
+
         builder.Property(u => u.Id)
             .HasColumnName("id")
             .ValueGeneratedNever();
 
-        builder.Property(u => u.Username)
-            .HasColumnName("username")
-            .HasMaxLength(50)
-            .IsRequired();
-
-        builder.Property(u => u.Email)
-            .HasColumnName("email")
-            .HasMaxLength(255)
-            .IsRequired();
-
-        builder.Property(u => u.PasswordHash)
-            .HasColumnName("password_hash")
-            .HasMaxLength(500)
-            .IsRequired();
 
         builder.Property(u => u.FirstName)
             .HasColumnName("first_name")
-            .HasMaxLength(100);
+            .HasMaxLength(100)
+            .IsRequired();
 
         builder.Property(u => u.LastName)
             .HasColumnName("last_name")
-            .HasMaxLength(100);
+            .HasMaxLength(100)
+            .IsRequired();
 
         builder.Property(u => u.ProfilePictureUrl)
             .HasColumnName("profile_picture_url")
@@ -58,15 +52,15 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.DeletedAt)
             .HasColumnName("deleted_at");
 
-        builder.HasIndex(u => u.Email)
-            .IsUnique()
-            .HasDatabaseName("ux_app_users_email");
-
-        builder.HasIndex(u => u.Username)
-            .IsUnique()
-            .HasDatabaseName("ux_app_users_username");
+        builder.HasOne<AppUser>()
+            .WithOne()
+            .HasForeignKey<User>(u => u.IdentityUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasQueryFilter(u => u.DeletedAt == null);
+        builder.HasIndex(u => u.IdentityUserId)
+            .IsUnique()
+            .HasDatabaseName("ux_app_users_identity_user_id");
 
         builder.Ignore(u => u.FullName);
     }
