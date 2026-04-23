@@ -39,6 +39,7 @@ public static class InfrastructureRegister
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
+        services.AddTransient<IIdentityService, IdentityService>();
         return services;
     }
 }
