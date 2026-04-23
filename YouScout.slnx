@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="YouScout.Application/YouScout.Application.csproj" />
   <Project Path="YouScout.Domain/YouScout.Domain.csproj" />
+  <Project Path="YouScout.Infrastructure/YouScout.Infrastructure.csproj" />
 </Solution>
