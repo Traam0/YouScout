@@ -1,0 +1,7 @@
+﻿services:
+  youscout.web:
+    image: youscout.web
+    build:
+      context: .
+      dockerfile: YouScout.Web/Dockerfile
+

@@ -1,5 +1,9 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="compose.yaml" />
+  </Folder>
   <Project Path="YouScout.Application/YouScout.Application.csproj" />
   <Project Path="YouScout.Domain/YouScout.Domain.csproj" />
   <Project Path="YouScout.Infrastructure/YouScout.Infrastructure.csproj" />
+  <Project Path="YouScout.Web/YouScout.Web.csproj" />
 </Solution>
