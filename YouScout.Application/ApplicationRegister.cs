@@ -10,7 +10,6 @@ public static class ApplicationRegister
 {
     public static IServiceCollection RegisterApplicationLayer(this IServiceCollection services)
     {
-        services.AddAutoMapper(config => config.AddMaps(typeof(ApplicationMarker).Assembly));
         services.AddValidatorsFromAssembly(typeof(ApplicationMarker).Assembly);
 
         services.AddMediatR(config =>

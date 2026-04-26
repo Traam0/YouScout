@@ -9,9 +9,11 @@ public class Repository<TEntity, TKey>(ApplicationDbContext context) : IReposito
     where TEntity : Entity
     where TKey : notnull
 {
+    protected readonly ApplicationDbContext Context = context;
+
     public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Set<TEntity>()
+        return await Context.Set<TEntity>()
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -19,7 +21,7 @@ public class Repository<TEntity, TKey>(ApplicationDbContext context) : IReposito
     public async Task<IEnumerable<TEntity>> GetAllAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken = default)
     {
-        return await context.Set<TEntity>()
+        return await Context.Set<TEntity>()
             .AsNoTracking()
             .Skip(pageNumber * pageSize)
             .Take(pageSize)
@@ -28,12 +30,12 @@ public class Repository<TEntity, TKey>(ApplicationDbContext context) : IReposito
 
     public async Task<TEntity?> FindByIdAsync(TKey id, CancellationToken cancellationToken = default)
     {
-        return await context.Set<TEntity>().FindAsync([id], cancellationToken);
+        return await Context.Set<TEntity>().FindAsync([id], cancellationToken);
     }
 
     public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        var entry = await context.Set<TEntity>().AddAsync(entity, cancellationToken);
+        var entry = await Context.Set<TEntity>().AddAsync(entity, cancellationToken);
         return entry.Entity;
     }
 
@@ -41,7 +43,7 @@ public class Repository<TEntity, TKey>(ApplicationDbContext context) : IReposito
     {
         return await Task.Run(() =>
         {
-            var entry = context.Set<TEntity>().Update(entity);
+            var entry = Context.Set<TEntity>().Update(entity);
             return entry.Entity;
         }, cancellationToken);
     }
@@ -50,7 +52,7 @@ public class Repository<TEntity, TKey>(ApplicationDbContext context) : IReposito
     {
         return await Task.Run(() =>
         {
-            var entry = context.Set<TEntity>().Remove(entity);
+            var entry = Context.Set<TEntity>().Remove(entity);
             return entry.Entity;
         }, cancellationToken);
     }

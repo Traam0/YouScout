@@ -13,7 +13,7 @@ public class AuthorizationPipeLine<TRequest, TResponse>(IUserContext currentUser
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var authorizationAttributes = request.GetType().GetCustomAttributes<AuthorizeRequestAttribute>().ToList();
+        var authorizationAttributes = request.GetType().GetCustomAttributes<Guard>().ToList();
 
         if (authorizationAttributes.Count == 0) return await next(cancellationToken);
         if (currentUser.Id is null) throw new UnauthorizedAccessException();

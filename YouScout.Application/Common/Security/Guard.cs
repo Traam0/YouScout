@@ -1,7 +1,7 @@
 namespace YouScout.Application.Common.Security;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-public class AuthorizeRequestAttribute() : Attribute()
+public class Guard() : Attribute()
 {
     public string Roles { get; set; } = string.Empty;
 

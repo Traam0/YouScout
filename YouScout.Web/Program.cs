@@ -1,6 +1,7 @@
 using YouScout.Application;
 using YouScout.Infrastructure;
 using YouScout.Infrastructure.Identity;
+using YouScout.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,13 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services
     .RegisterApplicationLayer()
-    .RegisterInfrastructureLayer();
+    .RegisterInfrastructureLayer(builder.Configuration)
+    .RegisterWebServices();
+
 
 var app = builder.Build();
 
@@ -29,6 +29,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
