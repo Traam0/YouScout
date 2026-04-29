@@ -7,10 +7,12 @@ using YouScout.Application.Common.Interfaces;
 using YouScout.Domain.Common.Contracts;
 using YouScout.Infrastructure.Data;
 using YouScout.Infrastructure.Data.Interceptors;
+using YouScout.Infrastructure.Factories;
 using YouScout.Infrastructure.Identity;
 using YouScout.Infrastructure.Interfaces.Storage;
 using YouScout.Infrastructure.Persistence;
 using YouScout.Infrastructure.Persistence.Repositories;
+using YouScout.Infrastructure.Storage;
 using YouScout.Infrastructure.Storage.Cloudinary;
 
 namespace YouScout.Infrastructure;
@@ -44,8 +46,14 @@ public static class InfrastructureRegister
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IUserRepository, UserRepository>();
 
+        // << Storage start >> //
+        services.AddScoped<IMediaStorageFactory, MediaStorageFactory>();
         services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
-        services.AddScoped<IMediaStorage, CloudinaryMediaStorage>();
+        services.AddKeyedScoped<IMediaStorage, LocalFileStorage>(nameof(IMediaStorageFactory.StorageProvider.Local)
+            .ToLower());
+        services.AddKeyedScoped<IMediaStorage, CloudinaryMediaStorage>(
+            nameof(IMediaStorageFactory.StorageProvider.Cloudinary).ToLower());
+        // << Storage end >> //
         services.AddTransient<IIdentityService, IdentityService>();
         return services;
     }

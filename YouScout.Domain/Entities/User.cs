@@ -37,13 +37,24 @@ public class User : AuditableEntity, ISoftDeletable
         this.DeletedAt = null;
     }
 
-    public void Follow(Guid id)
+    public Follow Follow(Guid targetUserId)
     {
-        var following = Domain.Entities.Follow.Create(this.Id,
-            id,
+        if (this.Id == targetUserId) throw new InvalidOperationException("You cannot follow yourself.");
+        if (this.Following.Any(x => x.FollowingUserId == targetUserId))
+            throw new InvalidOperationException("Already following this user.");
+        var follow = Domain.Entities.Follow.Create(this.Id,
+            targetUserId,
             FollowType.User
         );
-        this.Followers.Add(following);
+        this.Following.Add(follow);
+        return follow;
+    }
+
+    public void Unfollow(Guid userId)
+    {
+        var follow = this.Following.FirstOrDefault(x => x.FollowingUserId == userId);
+        if(follow == null) throw new InvalidOperationException("You are not following this user.");
+        this.Following.Remove(follow);
     }
 
     public void UpdateProfile(string? bio, string? profilePictureUrl)
