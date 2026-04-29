@@ -5,13 +5,14 @@ using YouScout.Application.Common.Interfaces;
 
 namespace YouScout.Application.Common.PipeLines;
 
-public partial class LoggingPipeLine<TRequest>(
+public partial class LoggingPipeLine<TRequest, TResponse>(
     ILogger<TRequest> logger,
     IUserContext currentUser,
     IIdentityService identityService)
-    : IRequestPreProcessor<TRequest> where TRequest : IRequest
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
-    public async Task Process(TRequest request, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         var username = string.Empty;
 
@@ -26,6 +27,7 @@ public partial class LoggingPipeLine<TRequest>(
             username,
             request
         );
+        return await next();
     }
 
     [LoggerMessage(LogLevel.Information,

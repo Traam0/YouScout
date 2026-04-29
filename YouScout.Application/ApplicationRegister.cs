@@ -16,7 +16,7 @@ public static class ApplicationRegister
         {
             config.RegisterServicesFromAssembly(typeof(ApplicationMarker).Assembly);
 
-            config.AddOpenRequestPreProcessor(typeof(LoggingPipeLine<>));
+            config.AddOpenBehavior(typeof(LoggingPipeLine<,>));
             config.AddOpenBehavior(typeof(UnhandledExceptionPipeLine<,>));
             config.AddOpenBehavior(typeof(AuthorizationPipeLine<,>));
             config.AddOpenBehavior(typeof(ValidationPipeLine<,>));

@@ -23,6 +23,9 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("id")
             .ValueGeneratedNever();
 
+        builder.Property(u => u.Username)
+            .HasColumnName("username")
+            .IsRequired();
 
         builder.Property(u => u.FirstName)
             .HasColumnName("first_name")
@@ -57,7 +60,22 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey<User>(u => u.IdentityUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasMany(u => u.Followers)
+            .WithOne(f => f.FollowingUser)
+            .HasForeignKey(f => f.FollowingUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(u => u.Following)
+            .WithOne(f => f.Follower)
+            .HasForeignKey(f => f.FollowerId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
         builder.HasQueryFilter(u => u.DeletedAt == null);
+        builder.HasIndex(u => u.Username)
+            .IsUnique()
+            .HasDatabaseName("ux_app_users_username");
+
         builder.HasIndex(u => u.IdentityUserId)
             .IsUnique()
             .HasDatabaseName("ux_app_users_identity_user_id");

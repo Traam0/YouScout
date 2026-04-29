@@ -18,7 +18,7 @@ public class CreateCurrentUserProfileCommandHandler(
         if (await repository.FindByIdentityUserIdAsync(currentUser.Id!, cancellationToken) is not null)
             return Result.Failure(["Profile already exists for this user."]);
 
-        var user = User.Create(currentUser.Id!, request.FirstName, request.LastName);
+        var user = User.Create(currentUser.Id!, request.Username, request.FirstName, request.LastName);
         user.UpdateProfile(request.Bio, request.ProfilePicture);
         await repository.AddAsync(user, cancellationToken);
         await unitOfWork.SaveChangeAsync(cancellationToken);

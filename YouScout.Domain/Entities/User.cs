@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using YouScout.Domain.Common.Abstract;
 using YouScout.Domain.Common.Contracts;
+using YouScout.Domain.Enums;
 
 namespace YouScout.Domain.Entities;
 
@@ -8,12 +9,17 @@ public class User : AuditableEntity, ISoftDeletable
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
     public string IdentityUserId { get; private set; } = null!;
+
+    public string Username { get; private set; } = null!;
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
     public string? ProfilePictureUrl { get; private set; } = null;
     public string? Bio { get; private set; } = null;
     public string FullName => $"{FirstName} {LastName}";
     public DateTimeOffset? DeletedAt { get; private set; }
+
+    public ICollection<Follow> Followers { get; private set; } = new List<Follow>();
+    public ICollection<Follow> Following { get; private set; } = new List<Follow>();
 
     private User()
     {
@@ -31,6 +37,14 @@ public class User : AuditableEntity, ISoftDeletable
         this.DeletedAt = null;
     }
 
+    public void Follow(Guid id)
+    {
+        var following = Domain.Entities.Follow.Create(this.Id,
+            id,
+            FollowType.User
+        );
+        this.Followers.Add(following);
+    }
 
     public void UpdateProfile(string? bio, string? profilePictureUrl)
     {
@@ -48,10 +62,13 @@ public class User : AuditableEntity, ISoftDeletable
     }
 
 
-    public static User Create(string identityUserId, string firstName, string lastName)
+    public static User Create(string identityUserId, string username, string firstName, string lastName)
     {
         if (string.IsNullOrWhiteSpace(identityUserId))
             throw new ArgumentException("IdentityUserId is required");
+
+        if (string.IsNullOrWhiteSpace(username))
+            throw new ArgumentException("Username is required");
 
         if (string.IsNullOrWhiteSpace(firstName))
             throw new ArgumentException("First name is required");
@@ -62,6 +79,7 @@ public class User : AuditableEntity, ISoftDeletable
         return new User()
         {
             IdentityUserId = identityUserId,
+            Username = username,
             FirstName = firstName,
             LastName = lastName,
         };
