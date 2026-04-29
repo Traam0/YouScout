@@ -9,12 +9,12 @@ public class UserRepository(ApplicationDbContext context) : Repository<User, Gui
 {
     public async Task<User?> FindByIdentityUserIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        return await base.Context.Users.Where(u => u.IdentityUserId == id).FirstOrDefaultAsync(cancellationToken);
+        return await base.Context.Profiles.Where(u => u.IdentityUserId == id).FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<User?> FindByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-        return await base.Context.Users
+        return await base.Context.Profiles
             .Where(u => EF.Functions.Like(u.Username, username))
             .FirstOrDefaultAsync(cancellationToken);
     }

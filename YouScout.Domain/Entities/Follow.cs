@@ -12,7 +12,8 @@ public class Follow : AuditableEntity
 
     public User Follower { get; private set; } = null!;
     public User? FollowingUser { get; private set; }
-
+    
+    private Follow(){}
 
     public static Follow Create(
         Guid followerId,

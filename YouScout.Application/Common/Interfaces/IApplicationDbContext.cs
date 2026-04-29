@@ -5,5 +5,6 @@ namespace YouScout.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
-    DbSet<User> Users { get; }
+    DbSet<User> Profiles { get; }
+    DbSet<Follow> Follows { get; }
 };
