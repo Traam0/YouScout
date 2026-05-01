@@ -9,7 +9,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("app_users");
+        builder.ToTable("user_profiles");
 
         builder.HasKey(u => u.Id)
             .HasName("pk_app_users_id");

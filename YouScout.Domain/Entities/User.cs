@@ -18,8 +18,8 @@ public class User : AuditableEntity, ISoftDeletable
     public string FullName => $"{FirstName} {LastName}";
     public DateTimeOffset? DeletedAt { get; private set; }
 
-    public ICollection<Follow> Followers { get; private set; } = new List<Follow>();
-    public ICollection<Follow> Following { get; private set; } = new List<Follow>();
+    public ICollection<Follow>? Followers { get; private set; } = new List<Follow>();
+    public ICollection<Follow>? Following { get; private set; } = new List<Follow>();
 
     private User()
     {
