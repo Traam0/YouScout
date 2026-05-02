@@ -44,7 +44,7 @@ public static class InfrastructureRegister
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserQueries, UserQueries>();
 
         // << Storage start >> //
         services.AddScoped<IMediaStorageFactory, MediaStorageFactory>();

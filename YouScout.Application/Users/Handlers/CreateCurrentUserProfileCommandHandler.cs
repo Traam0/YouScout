@@ -8,14 +8,15 @@ using YouScout.Domain.Entities;
 namespace YouScout.Application.Users.Handlers;
 
 public class CreateCurrentUserProfileCommandHandler(
-    IUserRepository repository,
+    IRepository<User, Guid> repository,
+    IUserQueries userQueries,
     IUnitOfWork unitOfWork,
     IUserContext currentUser)
     : IRequestHandler<CreateCurrentUserProfileCommand, Result>
 {
     public async Task<Result> Handle(CreateCurrentUserProfileCommand request, CancellationToken cancellationToken)
     {
-        if (await repository.FindByIdentityUserIdAsync(currentUser.Id!, cancellationToken) is not null)
+        if (await userQueries.FindByIdentityUserIdAsync(currentUser.Id!, cancellationToken) is not null)
             return Result.Failure(["Profile already exists for this user."]);
 
         var user = User.Create(currentUser.Id!, request.Username, request.FirstName, request.LastName);

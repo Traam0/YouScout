@@ -1,12 +1,9 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Scripting.Hosting;
 using YouScout.Application.Common.Exceptions;
 using YouScout.Application.Users.Commands;
 using YouScout.Application.Users.Queries;
-using YouScout.Domain.Common.Exceptions;
-using YouScout.Domain.Entities;
 using YouScout.Web.Models;
 
 namespace YouScout.Web.Controllers;
@@ -24,7 +21,7 @@ public class ProfileController(IMediator mediator, IMapper mapper) : ControllerB
             var response = await mediator.Send(query);
             return Ok(response);
         }
-        catch (EntityNullReferenceException<User> ex)
+        catch (NotFoundException ex)
         {
             return NotFound(ex.Message);
         }
@@ -42,6 +39,32 @@ public class ProfileController(IMediator mediator, IMapper mapper) : ControllerB
         }
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(string id)
+    {
+        try
+        {
+            GetProfileQuery query = new(Guid.Parse(id));
+            var response = await mediator.Send(query);
+            return Ok(response);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(e.Message);
+        }
+        catch (ForbiddenAccessException e)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProfileRequest body)
@@ -49,8 +72,8 @@ public class ProfileController(IMediator mediator, IMapper mapper) : ControllerB
         try
         {
             var command = mapper.Map<CreateCurrentUserProfileCommand>(body);
-            
-            
+
+
             var response = await mediator.Send(command);
             if (response.Succeeded)
                 return Created();
@@ -80,5 +103,3 @@ public class ProfileController(IMediator mediator, IMapper mapper) : ControllerB
         return StatusCode(StatusCodes.Status501NotImplemented);
     }
 }
-
-

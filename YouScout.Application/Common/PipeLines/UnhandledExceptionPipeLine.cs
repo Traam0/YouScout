@@ -1,7 +1,8 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using YouScout.Application.Common.Exceptions;
 
-namespace YouScout.Application.Common.Exceptions;
+namespace YouScout.Application.Common.PipeLines;
 
 public partial class UnhandledExceptionPipeLine<TRequest, TResponse>(ILogger<TRequest> logger)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
@@ -13,7 +14,7 @@ public partial class UnhandledExceptionPipeLine<TRequest, TResponse>(ILogger<TRe
         {
             return await next(cancellationToken);
         }
-        catch (Exception e)
+        catch (Exception e) when (e is not NotFoundException)
         {
             this.LogCriticalExceptionRequest(typeof(TRequest).Name, request, e);
             throw;
