@@ -7,5 +7,4 @@ public interface IApplicationDbContext
 {
     DbSet<User> Profiles { get; }
     DbSet<Follow> Follows { get; }
-    DbSet<Post> Posts { get; }
 };
