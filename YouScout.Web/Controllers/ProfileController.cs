@@ -42,59 +42,21 @@ public class ProfileController(IMediator mediator, IMapper mapper) : ControllerB
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(string id)
     {
-        try
-        {
-            GetProfileQuery query = new(Guid.Parse(id));
-            var response = await mediator.Send(query);
-            return Ok(response);
-        }
-        catch (NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(e.Message);
-        }
-        catch (ForbiddenAccessException e)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, e.Message);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-        }
+        GetProfileQuery query = new(Guid.Parse(id));
+        var response = await mediator.Send(query);
+        return Ok(response);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProfileRequest body)
     {
-        try
-        {
-            var command = mapper.Map<CreateCurrentUserProfileCommand>(body);
+        var command = mapper.Map<CreateCurrentUserProfileCommand>(body);
 
 
-            var response = await mediator.Send(command);
-            if (response.Succeeded)
-                return Created();
-            return BadRequest(response.Errors);
-        }
-        catch (ValidationException ex)
-        {
-            return BadRequest(new { message = ex.Message, errors = ex.Errors });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(e.Message);
-        }
-        catch (ForbiddenAccessException e)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, e.Message);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-        }
+        var response = await mediator.Send(command);
+        if (response.Succeeded)
+            return Created();
+        return BadRequest(response.Errors);
     }
 
     [HttpPut]

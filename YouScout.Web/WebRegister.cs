@@ -29,6 +29,9 @@ public static class WebRegister
                 return requirement;
             });
         });
+        services.AddCors(opts =>
+            opts.AddDefaultPolicy(p =>
+                p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
         services.AddHttpContextAccessor();
         services.AddScoped<IUserContext, UserContext>();
