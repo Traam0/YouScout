@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Posts\Queries\" />
+      <Folder Include="Feed\Queries\" />
     </ItemGroup>
 
 </Project>

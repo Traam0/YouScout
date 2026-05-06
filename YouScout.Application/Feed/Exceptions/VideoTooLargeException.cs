@@ -1,4 +1,4 @@
-namespace YouScout.Application.Posts.Exceptions;
+namespace YouScout.Application.Feed.Exceptions;
 
 public class VideoTooLargeException(long maxBytes)
     : Exception($"Video exceeds the maximum allowed size of {maxBytes / 1_048_576} MB.");

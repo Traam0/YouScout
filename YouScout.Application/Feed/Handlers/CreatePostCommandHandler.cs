@@ -2,12 +2,12 @@ using AutoMapper;
 using MediatR;
 using YouScout.Application.Common.Interfaces;
 using YouScout.Application.Common.Models;
-using YouScout.Application.Posts.Commands;
+using YouScout.Application.Feed.Commands;
 using YouScout.Domain.Common.Contracts;
 using YouScout.Domain.Entities;
 using YouScout.Infrastructure.Interfaces.Storage;
 
-namespace YouScout.Application.Posts.Handlers;
+namespace YouScout.Application.Feed.Handlers;
 
 public class CreatePostCommandHandler(
     IMediaStorageFactory storageFactory,
