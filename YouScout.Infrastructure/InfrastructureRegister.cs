@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using YouScout.Application.Common.Enums;
 using YouScout.Application.Common.Interfaces;
+using YouScout.Application.Common.Interfaces.Strategy;
 using YouScout.Domain.Common.Contracts;
 using YouScout.Infrastructure.Data;
 using YouScout.Infrastructure.Data.Interceptors;
@@ -14,6 +16,7 @@ using YouScout.Infrastructure.Persistence;
 using YouScout.Infrastructure.Persistence.Repositories;
 using YouScout.Infrastructure.Storage;
 using YouScout.Infrastructure.Storage.Cloudinary;
+using YouScout.Infrastructure.Strategy.Feed;
 
 namespace YouScout.Infrastructure;
 
@@ -55,6 +58,17 @@ public static class InfrastructureRegister
             nameof(IMediaStorageFactory.StorageProvider.Cloudinary).ToLower());
         // << Storage end >> //
         services.AddTransient<IIdentityService, IdentityService>();
+
+        // << Strategies start >> //
+        services.AddScoped<IFeedStrategyFactory, FeedStrategyFactory>();
+        services.AddKeyedScoped<IFeedStrategy, ForYouFeedStrategy>(nameof(FeedMode.ForYou));
+        services.AddKeyedScoped<IFeedStrategy, FollowingFeedStrategy>(nameof(FeedMode.Following));
+        // services.AddKeyedScoped<IFeedStrategy, ExploreFeedStrategy>(nameof(FeedMo`de.Explore));
+        // services.AddKeyedScoped<IFeedStrategy, FeedStrategy>(nameof(FeedMode.All);
+
+        // << Strategies start >> //
+
+
         return services;
     }
 }
