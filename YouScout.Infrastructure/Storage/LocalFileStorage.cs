@@ -4,7 +4,7 @@ using YouScout.Infrastructure.Interfaces.Storage;
 
 namespace YouScout.Infrastructure.Storage;
 
-public class LocalFileStorage : IMediaStorage
+public partial class LocalFileStorage : IMediaStorage
 {
     private readonly string _rootPath;
     private readonly string _baseUrl;
@@ -23,38 +23,23 @@ public class LocalFileStorage : IMediaStorage
         string contentType,
         CancellationToken cancellationToken = default)
     {
-        // 1. Validate basic type (optional but recommended)
         if (string.IsNullOrWhiteSpace(fileName))
             throw new ArgumentException("Invalid file name.");
 
-        // 2. Sanitize file name
         var sanitizedFileName = SanitizeFileName(fileName);
 
-        // 3. Extract extension safely
         var extension = Path.GetExtension(sanitizedFileName);
         if (string.IsNullOrWhiteSpace(extension))
             throw new InvalidOperationException("File must have an extension.");
 
-        // 4. Organize into folders (by date)
-        var folder = Path.Combine(
-            DateTime.UtcNow.Year.ToString(),
-            DateTime.UtcNow.Month.ToString("D2")
-        );
+        var publicId = $"{Guid.NewGuid()}{extension}";
 
-        var fullFolderPath = Path.Combine(_rootPath, folder);
-        Directory.CreateDirectory(fullFolderPath);
-
-        // 5. Generate unique public ID
-        var publicId = $"{folder}/{Guid.NewGuid()}{extension}";
-
-        // 6. Final file path (safe)
         var filePath = Path.Combine(_rootPath, publicId);
 
-        // 7. Save file
-        using var fileStreamOutput = new FileStream(filePath, FileMode.Create);
+        await using var fileStreamOutput = new FileStream(filePath, FileMode.Create);
         await fileStream.CopyToAsync(fileStreamOutput, cancellationToken);
 
-        return publicId.Replace("\\", "/"); // normalize for URLs
+        return publicId.Replace("\\", "/");
     }
 
     public Task DeleteAsync(
@@ -77,18 +62,17 @@ public class LocalFileStorage : IMediaStorage
         return Task.FromResult(url.Replace("\\", "/"));
     }
 
-    // 🔐 File name sanitization
     private static string SanitizeFileName(string fileName)
     {
-        // Remove path traversal attempts
         fileName = Path.GetFileName(fileName);
 
-        // Replace invalid characters
-        fileName = Regex.Replace(fileName, @"[^a-zA-Z0-9\.\-_]", "_");
+        fileName = FormatFileName().Replace(fileName, "_");
 
-        // Limit length (optional safety)
         return fileName.Length > 100
-            ? fileName.Substring(0, 100)
+            ? fileName[..100]
             : fileName;
     }
+
+    [GeneratedRegex(@"[^a-zA-Z0-9\.\-_]")]
+    private static partial Regex FormatFileName();
 }
